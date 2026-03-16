@@ -29,7 +29,7 @@ function buildJokerPanelHTML() {
   return `
     <section class="card-section joker-section-global">
       <div class="section-header">
-        <h3><span class="suit red">♥</span> Jokers <span class="section-subtitle">(shared by both hands)</span></h3>
+        <h3><span class="suit red">♥</span> Jokers </h3>
         <select class="joker-picker" onchange="addJoker(this)">
           <option value="">+ Add Joker</option>
           ${jokerOpts}
