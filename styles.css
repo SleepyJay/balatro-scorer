@@ -62,12 +62,33 @@ body {
   letter-spacing: 0.3rem;
 }
 
+/* ── Global Joker Panel ────────────────────────────────────────────────────── */
+.joker-panel-global {
+  max-width: 1400px;
+  margin: 1.5rem auto 0;
+  padding: 0 1.5rem;
+}
+
+.joker-section-global {
+  border-color: #8a5c1a;
+}
+
+.section-subtitle {
+  font-family: 'Lato', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 300;
+  color: var(--dim);
+  text-transform: none;
+  letter-spacing: 0;
+  margin-left: 0.3rem;
+}
+
 /* ── Layout ────────────────────────────────────────────────────────────────── */
 .hands-container {
   display: flex;
   align-items: flex-start;
   gap: 0;
-  padding: 1.5rem;
+  padding: 1rem 1.5rem 1.5rem;
   max-width: 1400px;
   margin: 0 auto;
 }
