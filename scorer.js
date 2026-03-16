@@ -122,26 +122,11 @@ function renderJokers() {
     return;
   }
   el.innerHTML = jokers.map(j => `
-    <div class="item-row" id="${j.id}">
-      <div class="item-name">${j.name}</div>
-      <div class="item-stats">
-        <div class="stat-cell">
-          <label>Chips</label>
-          <input type="number" class="mini-input chip-color" value="${j.chips}" min="0"
-                 oninput="updateJoker('${j.id}', 'chips', this.value)">
-        </div>
-        <div class="stat-cell">
-          <label>+Mult</label>
-          <input type="number" class="mini-input mult-color" value="${j.aMult}" min="0"
-                 oninput="updateJoker('${j.id}', 'aMult', this.value)">
-        </div>
-        <div class="stat-cell">
-          <label>×Mult</label>
-          <input type="number" class="mini-input xmult-color" value="${j.xMult}" min="0" step="0.01"
-                 oninput="updateJoker('${j.id}', 'xMult', this.value)">
-        </div>
-      </div>
-      <div class="item-desc">${j.description}</div>
+    <div class="joker-row" id="${j.id}">
+      <span class="joker-name" title="${j.description}">${j.name}</span>
+      <span class="joker-stat"><span class="lbl">Chips</span><input type="number" class="mini-input chip-color" value="${j.chips}" min="0" oninput="updateJoker('${j.id}', 'chips', this.value)"></span>
+      <span class="joker-stat"><span class="lbl">+Mult</span><input type="number" class="mini-input mult-color" value="${j.aMult}" min="0" oninput="updateJoker('${j.id}', 'aMult', this.value)"></span>
+      <span class="joker-stat"><span class="lbl">×Mult</span><input type="number" class="mini-input xmult-color" value="${j.xMult}" min="0" step="0.01" oninput="updateJoker('${j.id}', 'xMult', this.value)"></span>
       <button class="remove-btn" onclick="removeJoker('${j.id}')">✕</button>
     </div>
   `).join('');
