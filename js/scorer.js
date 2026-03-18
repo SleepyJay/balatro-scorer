@@ -125,9 +125,9 @@ function renderJokers() {
   }
   el.innerHTML = jokers.map(j => `
     <div class="joker-row" id="${j.id}">
-      <span class="point-stat"><span class="lbl">Chips</span><input type="number" class="mini-input chip-color" value="${j.chips}" min="0" oninput="updateJoker('${j.id}', 'chips', this.value)"></span>
-      <span class="point-stat"><span class="lbl">+Mult</span><input type="number" class="mini-input mult-color" value="${j.aMult}" min="0" oninput="updateJoker('${j.id}', 'aMult', this.value)"></span>
-      <span class="point-stat"><span class="lbl">×Mult</span><input type="number" class="mini-input xmult-color" value="${j.xMult}" min="0" step="0.01" oninput="updateJoker('${j.id}', 'xMult', this.value)"></span>
+      <span class="point-stat"><span class="lbl">Chips</span><input type="number" class="mini-input chip-color" value="${j.chips}" min="0" step="${j.chipsStep}" oninput="updateJoker('${j.id}', 'chips', this.value)"></span>
+      <span class="point-stat"><span class="lbl">+Mult</span><input type="number" class="mini-input mult-color" value="${j.aMult}" min="0" step="${j.aMultStep}" oninput="updateJoker('${j.id}', 'aMult', this.value)"></span>
+      <span class="point-stat"><span class="lbl">×Mult</span><input type="number" class="mini-input xmult-color" value="${j.xMult}" min="0" step="${j.xMultStep}" oninput="updateJoker('${j.id}', 'xMult', this.value)"></span>
       <span class="joker-name"><span class="lbl">${j.description}</span></span>
       <button class="remove-btn" onclick="removeJoker('${j.id}')">✕</button>
     </div>
@@ -190,7 +190,7 @@ function renderCards(n) {
       : "Unplayed cards"}
       <span class="point-stat"><span class="lbl">Chips</span><input type="number" class="mini-input chip-input chip-color" value="${c.chips}" min="0" oninput="updateCard(${n}, '${c.id}', 'chips', this.value)"></span>
       <span class="point-stat"><span class="lbl">+Mult</span><input type="number" class="mini-input mult-color" value="${c.aMult}" min="0" oninput="updateCard(${n}, '${c.id}', 'aMult', this.value)"></span>
-      <span class="point-stat"><span class="lbl">×Mult</span><input type="number" class="mini-input xmult-color" value="${c.xMult}" min="0" step="1" oninput="updateCard(${n}, '${c.id}', 'xMult', this.value)"></span>
+      <span class="point-stat"><span class="lbl">×Mult</span><input type="number" class="mini-input xmult-color" value="${c.xMult}" min="0" step=".5" oninput="updateCard(${n}, '${c.id}', 'xMult', this.value)"></span>
       <button class="remove-btn" title="Clear card" onclick="clearCard(${n}, '${c.id}')">✕</button>
     </div>
   `).join('');
