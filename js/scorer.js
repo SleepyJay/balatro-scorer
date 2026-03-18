@@ -8,13 +8,16 @@ const state = {
 
 let idCounter = 0;
 const uid = () => `id-${++idCounter}`;
+const blankCard = () => ({ id: uid(), rank: '', suit: '', chips: 0, aMult: 0, xMult: 1 });
 
 // ── Bootstrap ────────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
+  [1, 2].forEach(n => { state[n].cards = Array.from({length: 6}, blankCard); });
   document.getElementById('joker-panel').innerHTML = buildJokerPanelHTML();
   [1, 2].forEach(n => {
     document.getElementById(`panel-${n}`).innerHTML = buildPanelHTML(n);
+    renderCards(n);
   });
   [1, 2].forEach(n => calculate(n));
 });
@@ -73,14 +76,9 @@ function buildPanelHTML(n) {
                  value="1" min="0" oninput="calculate(${n})">
         </div>
       </div>
-
-      <div class="subsection-header">
-        <span>Scored Cards</span>
-        <button class="add-btn" onclick="addCard(${n})">+ Card</button>
-      </div>
-      <div class="item-list" id="cards-${n}">
-        <p class="empty-hint">No cards added</p>
-      </div>
+     
+      <div class="subsection-header"><span>Scored Cards</span></div>
+      <div class="item-list" id="cards-${n}"></div>
     </section>
 
     <div class="score-display" id="score-display-${n}">
@@ -123,9 +121,9 @@ function renderJokers() {
   }
   el.innerHTML = jokers.map(j => `
     <div class="joker-row" id="${j.id}">
-      <span class="joker-stat"><span class="lbl">Chips</span><input type="number" class="mini-input chip-color" value="${j.chips}" min="0" oninput="updateJoker('${j.id}', 'chips', this.value)"></span>
-      <span class="joker-stat"><span class="lbl">+Mult</span><input type="number" class="mini-input mult-color" value="${j.aMult}" min="0" oninput="updateJoker('${j.id}', 'aMult', this.value)"></span>
-      <span class="joker-stat"><span class="lbl">×Mult</span><input type="number" class="mini-input xmult-color" value="${j.xMult}" min="0" step="0.01" oninput="updateJoker('${j.id}', 'xMult', this.value)"></span>
+      <span class="point-stat"><span class="lbl">Chips</span><input type="number" class="mini-input chip-color" value="${j.chips}" min="0" oninput="updateJoker('${j.id}', 'chips', this.value)"></span>
+      <span class="point-stat"><span class="lbl">+Mult</span><input type="number" class="mini-input mult-color" value="${j.aMult}" min="0" oninput="updateJoker('${j.id}', 'aMult', this.value)"></span>
+      <span class="point-stat"><span class="lbl">×Mult</span><input type="number" class="mini-input xmult-color" value="${j.xMult}" min="0" step="0.01" oninput="updateJoker('${j.id}', 'xMult', this.value)"></span>
       <span class="joker-name"><span class="lbl">${j.description}</span></span>
       <button class="remove-btn" onclick="removeJoker('${j.id}')">✕</button>
     </div>
@@ -134,14 +132,10 @@ function renderJokers() {
 
 // ── Cards ─────────────────────────────────────────────────────────────────────
 
-function addCard(n) {
-  state[n].cards.push({ id: uid(), rank: 'A', suit: '♠', chips: 11, aMult: 0, xMult: 1 });
-  renderCards(n);
-  calculate(n);
-}
-
-function removeCard(n, id) {
-  state[n].cards = state[n].cards.filter(c => c.id !== id);
+function clearCard(n, id) {
+  const c = state[n].cards.find(c => c.id === id);
+  if (!c) return;
+  Object.assign(c, { rank: '', suit: '', chips: 0, aMult: 0, xMult: 1 });
   renderCards(n);
   calculate(n);
 }
@@ -152,13 +146,17 @@ function updateCard(n, id, field, val) {
 }
 
 function onCardRankChange(n, id, sel) {
-  const data = CARD_RANKS.find(r => r.rank === sel.value);
   const c = state[n].cards.find(c => c.id === id);
-  if (!c || !data) return;
-  c.rank = data.rank;
-  c.chips = data.chips;
-  const row = document.getElementById(id);
-  if (row) row.querySelector('.chip-input').value = data.chips;
+  if (!c) return;
+  c.rank = sel.value;
+  if (sel.value) {
+    const data = CARD_RANKS.find(r => r.rank === sel.value);
+    if (data) {
+      c.chips = data.chips;
+      const row = document.getElementById(id);
+      if (row) row.querySelector('.chip-input').value = data.chips;
+    }
+  }
   calculate(n);
 }
 
@@ -172,45 +170,24 @@ function onCardSuitChange(n, id, sel) {
 function isRedSuit(suit) { return suit === '♥' || suit === '♦'; }
 
 function renderCards(n) {
-  const el = document.getElementById(`cards-${n}`);
-  if (!state[n].cards.length) {
-    el.innerHTML = '<p class="empty-hint">No cards added</p>';
-    return;
-  }
-  el.innerHTML = state[n].cards.map(c => `
-    <div class="item-row card-row" id="${c.id}">
-      <div class="card-selects">
-        <select class="rank-select"
-                onchange="onCardRankChange(${n}, '${c.id}', this)">
-          ${CARD_RANKS.map(r =>
-            `<option value="${r.rank}" ${r.rank === c.rank ? 'selected' : ''}>${r.rank}</option>`
-          ).join('')}
-        </select>
-        <select class="suit-select ${isRedSuit(c.suit) ? 'red' : ''}"
-                onchange="onCardSuitChange(${n}, '${c.id}', this)">
-          ${SUITS.map(s =>
-            `<option value="${s}" ${s === c.suit ? 'selected' : ''}>${s}</option>`
-          ).join('')}
-        </select>
-      </div>
-      <div class="item-stats">
-        <div class="stat-cell">
-          <label>Chips</label>
-          <input type="number" class="mini-input chip-input chip-color" value="${c.chips}" min="0"
-                 oninput="updateCard(${n}, '${c.id}', 'chips', this.value)">
-        </div>
-        <div class="stat-cell">
-          <label>+Mult</label>
-          <input type="number" class="mini-input mult-color" value="${c.aMult}" min="0"
-                 oninput="updateCard(${n}, '${c.id}', 'aMult', this.value)">
-        </div>
-        <div class="stat-cell">
-          <label>×Mult</label>
-          <input type="number" class="mini-input xmult-color" value="${c.xMult}" min="0" step="0.01"
-                 oninput="updateCard(${n}, '${c.id}', 'xMult', this.value)">
-        </div>
-      </div>
-      <button class="remove-btn" onclick="removeCard(${n}, '${c.id}')">✕</button>
+  let i = 1;
+  document.getElementById(`cards-${n}`).innerHTML = state[n].cards.map(c => `
+    <div class="card-row" id="${c.id}">
+      <div style="display: none">${i++}</div>
+      ${i <= 6 ? `
+      <select class="rank-select" onchange="onCardRankChange(${n}, '${c.id}', this)">
+        <option value="">—</option>
+        ${CARD_RANKS.map(r => `<option value="${r.rank}" ${r.rank === c.rank ? 'selected' : ''}>${r.rank}</option>`).join('')}
+      </select>
+      <select class="suit-select ${isRedSuit(c.suit) ? 'red' : ''}" onchange="onCardSuitChange(${n}, '${c.id}', this)">
+        <option value="">—</option>
+        ${SUITS.map(s => `<option value="${s}" ${s === c.suit ? 'selected' : ''}>${s}</option>`).join('')}
+      </select>`
+      : "Unplayed cards"}
+      <span class="point-stat"><span class="lbl">Chips</span><input type="number" class="mini-input chip-input chip-color" value="${c.chips}" min="0" oninput="updateCard(${n}, '${c.id}', 'chips', this.value)"></span>
+      <span class="point-stat"><span class="lbl">+Mult</span><input type="number" class="mini-input mult-color" value="${c.aMult}" min="0" oninput="updateCard(${n}, '${c.id}', 'aMult', this.value)"></span>
+      <span class="point-stat"><span class="lbl">×Mult</span><input type="number" class="mini-input xmult-color" value="${c.xMult}" min="0" step="1" oninput="updateCard(${n}, '${c.id}', 'xMult', this.value)"></span>
+      <button class="remove-btn" title="Clear card" onclick="clearCard(${n}, '${c.id}')">✕</button>
     </div>
   `).join('');
 }
