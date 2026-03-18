@@ -75,6 +75,10 @@ function buildPanelHTML(n) {
           <input type="number" id="hand-mult-${n}" class="stat-input mult-color"
                  value="1" min="0" oninput="calculate(${n})">
         </div>
+        <div class="stat-cell">
+          <label>Plasma Deck</label>
+          <input type="checkbox" value="plasma" id="plasma-deck" oninput="calculate(${n})">
+        </div>
       </div>
      
       <div class="subsection-header"><span>Scored Cards</span></div>
@@ -215,10 +219,17 @@ function calculate(n) {
 
   let chips = parseFloat(document.getElementById(`hand-chips-${n}`).value) || 0;
   let mult  = parseFloat(document.getElementById(`hand-mult-${n}`).value)  || 0;
+  let plasma = document.getElementById('plasma-deck');
   let xMult = 1;
 
   for (const c of s.cards) { chips += c.chips || 0; mult += c.aMult || 0; xMult *= (c.xMult || 1); }
   for (const j of jokers)  { chips += j.chips || 0; mult += j.aMult || 0; xMult *= (j.xMult || 1); }
+
+  if (plasma.checked) {
+    chips = (chips + mult * xMult)/2;
+    mult = chips;
+    xMult = 1;
+  }
 
   const score = Math.floor(chips * mult * xMult);
 
