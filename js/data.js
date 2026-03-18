@@ -52,6 +52,7 @@ const JOKERS = [
   { name: "Devious Joker",    chips: 100, aMult: 0,   xMult: 1,    description: "+100 Chips if played hand contains a Straight" },
   { name: "Droll Joker",      chips: 0,   aMult: 10,  xMult: 1,    description: "+10 Mult if played hand contains a Flush" },
   { name: "Even Steven",      chips: 0,   aMult: 4,   xMult: 1,    description: "+4 Mult when a scored card is even (2,4,6,8,10)" },
+  { name: "Fortune Teller",   chips: 0,   aMult: 1,   xMult: 1,    description: "+1 Mult for Tarot cards used" },
   { name: "Flower Pot",       chips: 0,   aMult: 0,   xMult: 3,    description: "x3 Mult if played hand contains all 4 suits" },
   { name: "Glass Joker",      chips: 0,   aMult: 0,   xMult: 1,    description: "Gains x0.75 Mult per destroyed Glass Card (enter current)" },
   { name: "Green Joker",      chips: 0,   aMult: 0,   xMult: 1,    description: "+1 Mult per hand played, -1 per discard (enter current)" },
