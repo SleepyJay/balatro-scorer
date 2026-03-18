@@ -316,7 +316,7 @@ select option { background: #0d1f10; }
 .stat-input  { width: 70px; font-size: 1rem; text-align: center; }
 .mini-input  { width: 58px; text-align: center; }
 .rank-select { width: 52px; text-align: center; }
-.suit-select { width: 44px; text-align: center; font-size: 1.1rem; }
+.suit-select { width: 47px; text-align: center; font-size: 1.1rem; }
 .suit-select.red { color: var(--red); }
 .joker-picker { font-size: 0.8rem; max-width: 160px; }
 .hand-type-select { font-size: 0.85rem; }
