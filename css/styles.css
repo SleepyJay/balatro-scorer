@@ -255,6 +255,36 @@ body {
   white-space: nowrap;
 }
 
+.lbl-descr {
+  font-size: 0.88rem;
+  color: var(--dim);
+  white-space: nowrap;
+}
+
+.joker-row-end {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.hand-checks {
+  display: flex;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.hand-check-lbl {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.7rem;
+  color: var(--dim);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
 .item-name {
   font-size: 0.85rem;
   font-weight: 600;
@@ -282,6 +312,13 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
+}
+.stat-cell-up {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  align-self: flex-start;
+  margin-top: -0.15rem;
 }
 
 .stat-cell label {
@@ -388,6 +425,26 @@ input.xmult-color { border-color: rgba(165,91,245,0.4);  }
   text-align: center;
   padding: 0.4rem 0;
 }
+
+.hand-action-btns {
+  display: flex;
+  gap: 0.3rem;
+  align-self: flex-end;
+  margin-left: 0.25rem;
+}
+
+.action-btn {
+  background: rgba(200,168,76,0.1);
+  border: 1px solid var(--panel-border);
+  border-radius: 4px;
+  color: var(--gold);
+  cursor: pointer;
+  font-family: 'Lato', sans-serif;
+  font-size: 0.72rem;
+  padding: 0.2rem 0.5rem;
+  transition: background 0.15s;
+}
+.action-btn:hover { background: rgba(200,168,76,0.3); }
 
 .add-btn {
   background: rgba(200,168,76,0.15);

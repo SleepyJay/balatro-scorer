@@ -75,9 +75,13 @@ function buildPanelHTML(n) {
           <input type="number" id="hand-mult-${n}" class="stat-input mult-color"
                  value="1" min="0" oninput="calculate(${n})">
         </div>
-        <div class="stat-cell">
+        <div class="stat-cell-up">
           <label>Plasma Deck</label>
           <input type="checkbox" value="plasma" id="plasma-deck" oninput="calculate(${n})">
+        </div>
+        <div class="hand-action-btns">
+          <button class="action-btn" onclick="clearHand(${n})">Clear</button>
+          <button class="action-btn" onclick="dupHand(${n})">Dup</button>
         </div>
       </div>
      
@@ -100,7 +104,7 @@ function addJoker(sel) {
   const data = JOKERS.find(j => j.name === name);
   if (!data) return;
 
-  jokers.push({ id: uid(), ...data });
+  jokers.push({ id: uid(), ...data, hand1: true, hand2: true });
   sel.value = '';
   renderJokers();
   [1, 2].forEach(n => calculate(n));
@@ -117,6 +121,11 @@ function updateJoker(id, field, val) {
   if (j) { j[field] = parseFloat(val) || 0; [1, 2].forEach(n => calculate(n)); }
 }
 
+function toggleJokerHand(id, hand, checked) {
+  const j = jokers.find(j => j.id === id);
+  if (j) { j[hand] = checked; [1, 2].forEach(n => calculate(n)); }
+}
+
 function renderJokers() {
   const el = document.getElementById('jokers-list');
   if (!jokers.length) {
@@ -125,11 +134,18 @@ function renderJokers() {
   }
   el.innerHTML = jokers.map(j => `
     <div class="joker-row" id="${j.id}">
+      <span class="joker-name">${j.name}</span>
       <span class="point-stat"><span class="lbl">Chips</span><input type="number" class="mini-input chip-color" value="${j.chips}" min="0" step="${j.chipsStep}" oninput="updateJoker('${j.id}', 'chips', this.value)"></span>
       <span class="point-stat"><span class="lbl">+Mult</span><input type="number" class="mini-input mult-color" value="${j.aMult}" min="0" step="${j.aMultStep}" oninput="updateJoker('${j.id}', 'aMult', this.value)"></span>
       <span class="point-stat"><span class="lbl">×Mult</span><input type="number" class="mini-input xmult-color" value="${j.xMult}" min="0" step="${j.xMultStep}" oninput="updateJoker('${j.id}', 'xMult', this.value)"></span>
-      <span class="joker-name"><span class="lbl">${j.description}</span></span>
-      <button class="remove-btn" onclick="removeJoker('${j.id}')">✕</button>
+      <span class="joker-name"><span class="lbl-descr">${j.description}</span></span>
+      <span class="joker-row-end">
+        <span class="hand-checks">
+          <label class="hand-check-lbl"><input type="checkbox" ${j.hand1 ? 'checked' : ''} onchange="toggleJokerHand('${j.id}', 'hand1', this.checked)"> H1</label>
+          <label class="hand-check-lbl"><input type="checkbox" ${j.hand2 ? 'checked' : ''} onchange="toggleJokerHand('${j.id}', 'hand2', this.checked)"> H2</label>
+        </span>
+        <button class="remove-btn" onclick="removeJoker('${j.id}')">✕</button>
+      </span>
     </div>
   `).join('');
 }
@@ -196,6 +212,31 @@ function renderCards(n) {
   `).join('');
 }
 
+// ── Hand actions ──────────────────────────────────────────────────────────────
+
+function clearHand(n) {
+  const first = HAND_TYPES[0];
+  document.querySelector(`#panel-${n} .hand-type-select`).value = first.name;
+  document.getElementById(`hand-chips-${n}`).value = first.chips;
+  document.getElementById(`hand-mult-${n}`).value  = first.mult;
+  document.getElementById('plasma-deck').checked = false;
+  state[n].cards = Array.from({length: 6}, blankCard);
+  renderCards(n);
+  calculate(n);
+}
+
+function dupHand(n) {
+  const dest = n === 1 ? 2 : 1;
+  const srcType = document.querySelector(`#panel-${n} .hand-type-select`).value;
+  document.querySelector(`#panel-${dest} .hand-type-select`).value = srcType;
+  document.getElementById(`hand-chips-${dest}`).value = document.getElementById(`hand-chips-${n}`).value;
+  document.getElementById(`hand-mult-${dest}`).value  = document.getElementById(`hand-mult-${n}`).value;
+  document.getElementById('plasma-deck').checked = document.getElementById('plasma-deck').checked;
+  state[dest].cards = state[n].cards.map(c => ({ ...c, id: uid() }));
+  renderCards(dest);
+  calculate(dest);
+}
+
 // ── Hand type ─────────────────────────────────────────────────────────────────
 
 function onHandTypeChange(n, sel) {
@@ -223,7 +264,7 @@ function calculate(n) {
   let xMult = 1;
 
   for (const c of s.cards) { chips += c.chips || 0; mult += c.aMult || 0; xMult *= (c.xMult || 1); }
-  for (const j of jokers)  { chips += j.chips || 0; mult += j.aMult || 0; xMult *= (j.xMult || 1); }
+  for (const j of jokers.filter(j => j[`hand${n}`])) { chips += j.chips || 0; mult += j.aMult || 0; xMult *= (j.xMult || 1); }
 
   if (plasma.checked) {
     chips = (chips + mult * xMult)/2;
