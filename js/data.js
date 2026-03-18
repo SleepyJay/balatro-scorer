@@ -64,7 +64,7 @@ const JOKERS = [
   { name: "Mad Joker",        chips: 0,   aMult: 10,  xMult: 1,    chipsStep: 1,   aMultStep: 1,    xMultStep: 1,    description: "+10 Mult if played hand contains Two Pair" },
   { name: "Madness",          chips: 0,   aMult: 0,   xMult: 1,    chipsStep: 1,   aMultStep: 1,    xMultStep: 0.5,  description: "Gains x0.5 Mult each Blind selected (enter current)" },
   { name: "Mystic Summit",    chips: 0,   aMult: 15,  xMult: 1,    chipsStep: 1,   aMultStep: 1,    xMultStep: 1,    description: "+15 Mult when 0 discards remaining" },
-  { name: "Odd Todd",         chips: 31,  aMult: 0,   xMult: 1,    chipsStep: 31,  aMultStep: 1,    xMultStep: 1,    description: "+31 Chips when a scored card is odd (A,3,5,7,9)" },
+  { name: "Odd Todd",         chips: 0,  aMult: 0,   xMult: 1,    chipsStep: 31,  aMultStep: 1,    xMultStep: 1,    description: "+31 Chips when a scored card is odd (A,3,5,7,9)" },
   { name: "Obelisk",          chips: 0,   aMult: 0,   xMult: 1,    chipsStep: 1,   aMultStep: 1,    xMultStep: 0.2,  description: "Gains x0.2 Mult per consecutive non-top-hand played (enter current)" },
   { name: "Photograph",       chips: 0,   aMult: 0,   xMult: 2,    chipsStep: 1,   aMultStep: 1,    xMultStep: 1,    description: "x2 Mult for first played face card each round" },
   { name: "Raised Fist",      chips: 0,   aMult: 0,   xMult: 1,    chipsStep: 1,   aMultStep: 1,    xMultStep: 1,    description: "Adds 2× rank of lowest card to Mult (enter total manually)" },

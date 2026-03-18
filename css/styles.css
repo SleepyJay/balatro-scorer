@@ -22,6 +22,7 @@
   --score-bg:    rgba(0,0,0,0.5);
   --winner:      #2a6e1a;
   --loser:       #4a1515;
+  --black:       black;
 }
 
 /* ── Table ─────────────────────────────────────────────────────────────────── */
@@ -58,8 +59,13 @@ body {
 
 .header-suits {
   font-size: 1.8rem;
-  color: var(--gold);
   letter-spacing: 0.3rem;
+}
+.header-suits.red {
+  color: var(--red);
+}
+.header-suits.black {
+  color: var(--black);
 }
 
 /* ── Global Joker Panel ────────────────────────────────────────────────────── */

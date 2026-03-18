@@ -51,12 +51,9 @@ function buildPanelHTML(n) {
   ).join('');
 
   return `
-    <h2 class="panel-title">Hand ${n}</h2>
+    <h2 class="panel-title">♠ Hand ${n}</h2>
 
     <section class="card-section">
-      <div class="section-header">
-        <h3><span class="suit">♠</span> Hand</h3>
-      </div>
       <div class="hand-type-row">
         <label>Type</label>
         <select class="hand-type-select" onchange="onHandTypeChange(${n}, this)">
