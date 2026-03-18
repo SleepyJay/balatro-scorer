@@ -169,15 +169,12 @@ function onCardRankChange(n, id, sel) {
   const c = state[n].cards.find(c => c.id === id);
   if (!c) return;
   c.rank = sel.value;
-  if (sel.value) {
-    const data = CARD_RANKS.find(r => r.rank === sel.value);
-    if (data) {
-      c.chips = data.chips;
-      const row = document.getElementById(id);
-      if (row) row.querySelector('.chip-input').value = data.chips;
-    }
-  }
   calculate(n);
+}
+
+function baseChips(rank) {
+  const data = CARD_RANKS.find(r => r.rank === rank);
+  return data ? data.chips : 0;
 }
 
 function onCardSuitChange(n, id, sel) {
@@ -205,9 +202,9 @@ function renderCards(n) {
         ${SUITS.map(s => `<option value="${s}" ${s === c.suit ? 'selected' : ''}>${s}</option>`).join('')}
       </select>`
       : "Unplayed cards"}
-      <div class="card-stat"><span class="lbl">Chips</span><input type="number" class="mini-input chip-input chip-color no-spinner" value="${c.chips}" min="0" oninput="updateCard(${n}, '${c.id}', 'chips', this.value)"></div>
+      <div class="card-stat"><span class="lbl">+Chips</span><input type="number" class="mini-input chip-input chip-color" value="${c.chips}" min="0" step="10" oninput="updateCard(${n}, '${c.id}', 'chips', this.value)"></div>
       <div class="card-stat"><span class="lbl">+Mult</span><input type="number" class="mini-input mult-color" value="${c.aMult}" min="0" oninput="updateCard(${n}, '${c.id}', 'aMult', this.value)"></div>
-      <div class="card-stat"><span class="lbl">×Mult</span><input type="number" class="mini-input xmult-color" value="${c.xMult}" min="0" step=".5" oninput="updateCard(${n}, '${c.id}', 'xMult', this.value)"></div>
+      <div class="card-stat"><span class="lbl">×Mult</span><input type="number" class="mini-input xmult-color" value="${c.xMult}" min="1" step=".5" oninput="updateCard(${n}, '${c.id}', 'xMult', this.value)"></div>
       <div class="card-stat"><span class="lbl">Hits</span><input type="number" class="mini-input" value="${c.times}" min="1" step="1" oninput="updateCard(${n}, '${c.id}', 'times', this.value)"></div>
       <button class="remove-btn" title="Clear card" onclick="clearCard(${n}, '${c.id}')">✕</button>
     </div>
@@ -265,7 +262,7 @@ function calculate(n) {
 
   // Cards: each hit applies +chips, +aMult, ×xMult sequentially to running totals
   for (const c of s.cards) {
-    chips += (c.chips || 0) * (c.times || 1);
+    chips += (baseChips(c.rank) + (c.chips || 0)) * (c.times || 1);
     for (let i = 0; i < (c.times || 1); i++) {
       mult += c.aMult || 0;
       mult *= c.xMult || 1;

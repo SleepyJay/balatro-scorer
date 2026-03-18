@@ -234,6 +234,8 @@ body {
   border-bottom: 1px solid rgba(200,168,76,0.1);
 }
 .joker-row:last-child, .card-row:last-child { border-bottom: none; }
+.card-row { align-items: flex-start; }
+.card-row select, .card-row .remove-btn { margin-top: 0.85rem; }
 
 .joker-name {
   font-size: 0.85rem;
@@ -340,9 +342,6 @@ body {
 }
 
 /* ── Inputs & Selects ──────────────────────────────────────────────────────── */
-.no-spinner::-webkit-outer-spin-button,
-.no-spinner::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-.no-spinner { -moz-appearance: textfield; }
 input[type="number"],
 select {
   background: #0a0a0a;
@@ -367,7 +366,7 @@ select option { background: #0d1f10; }
 .stat-input  { width: 70px; font-size: 1rem; text-align: center; }
 .mini-input  { width: 58px; text-align: center; }
 .rank-select { width: 52px; text-align: center; }
-.suit-select { width: 47px; text-align: center; font-size: 1.1rem; }
+.suit-select { width: 47px; text-align: center; }
 .suit-select.red { color: var(--red); }
 .joker-picker { font-size: 0.8rem; max-width: 160px; }
 .hand-type-select { font-size: 0.85rem; }
