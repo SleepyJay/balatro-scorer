@@ -27,6 +27,7 @@ const CARD_RANKS = [
   { rank: "Q",  chips: 10 },
   { rank: "K",  chips: 10 },
   { rank: "A",  chips: 11 },
+  { rank: "B",  chips: 50 },
 ];
 
 const SUITS = ["♠", "♥", "♦", "♣"];
