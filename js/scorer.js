@@ -189,6 +189,23 @@ function onCardSuitChange(n, id, sel) {
 
 function isRedSuit(suit) { return suit === '♥' || suit === '♦'; }
 
+function initAdditiveChipInputs(n) {
+  const step = 10;
+  document.querySelectorAll(`#cards-${n} .chip-input`).forEach(input => {
+    let prev = null;
+    const save = () => { prev = parseFloat(input.value) || 0; };
+    input.addEventListener('mousedown', save);
+    input.addEventListener('keydown', e => { if (e.key === 'ArrowUp' || e.key === 'ArrowDown') save(); });
+    input.addEventListener('change', () => {
+      if (prev === null) return;
+      const dir = (parseFloat(input.value) || 0) > prev ? 1 : -1;
+      input.value = prev + dir * step;
+      input.dispatchEvent(new Event('input'));
+      prev = null;
+    });
+  });
+}
+
 function renderCards(n) {
   let i = 1;
   document.getElementById(`cards-${n}`).innerHTML = state[n].cards.map(c => `
@@ -210,6 +227,7 @@ function renderCards(n) {
       <button class="remove-btn" title="Clear card" onclick="clearCard(${n}, '${c.id}')">✕</button>
     </div>
   `).join('');
+  initAdditiveChipInputs(n);
 }
 
 // ── Hand actions ──────────────────────────────────────────────────────────────
