@@ -225,15 +225,15 @@ body {
   gap: 0.4rem;
 }
 
-/* Compact single-line joker rows */
-.joker-row {
+/* Compact single-line rows (jokers and cards) */
+.joker-row, .card-row {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.25rem 0.5rem;
   border-bottom: 1px solid rgba(200,168,76,0.1);
 }
-.joker-row:last-child { border-bottom: none; }
+.joker-row:last-child, .card-row:last-child { border-bottom: none; }
 
 .joker-name {
   font-size: 0.85rem;
@@ -243,7 +243,7 @@ body {
   cursor: help;
 }
 
-.joker-stat {
+.point-stat {
   display: flex;
   align-items: center;
   gap: 0.25rem;
@@ -294,7 +294,7 @@ body {
 /* ── Inputs & Selects ──────────────────────────────────────────────────────── */
 input[type="number"],
 select {
-  background: rgba(0,0,0,0.5);
+  background: #0a0a0a;
   border: 1px solid rgba(200,168,76,0.35);
   border-radius: 4px;
   color: var(--cream);
