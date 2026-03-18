@@ -8,7 +8,7 @@ const state = {
 
 let idCounter = 0;
 const uid = () => `id-${++idCounter}`;
-const blankCard = () => ({ id: uid(), rank: '', suit: '', chips: 0, aMult: 0, xMult: 1 });
+const blankCard = () => ({ id: uid(), rank: '', suit: '', chips: 0, aMult: 0, xMult: 1, times: 1 });
 
 // ── Bootstrap ────────────────────────────────────────────────────────────────
 
@@ -155,7 +155,7 @@ function renderJokers() {
 function clearCard(n, id) {
   const c = state[n].cards.find(c => c.id === id);
   if (!c) return;
-  Object.assign(c, { rank: '', suit: '', chips: 0, aMult: 0, xMult: 1 });
+  Object.assign(c, { rank: '', suit: '', chips: 0, aMult: 0, xMult: 1, times: 1 });
   renderCards(n);
   calculate(n);
 }
@@ -221,9 +221,10 @@ function renderCards(n) {
         ${SUITS.map(s => `<option value="${s}" ${s === c.suit ? 'selected' : ''}>${s}</option>`).join('')}
       </select>`
       : "Unplayed cards"}
-      <span class="point-stat"><span class="lbl">Chips</span><input type="number" class="mini-input chip-input chip-color" value="${c.chips}" min="0" oninput="updateCard(${n}, '${c.id}', 'chips', this.value)"></span>
-      <span class="point-stat"><span class="lbl">+Mult</span><input type="number" class="mini-input mult-color" value="${c.aMult}" min="0" oninput="updateCard(${n}, '${c.id}', 'aMult', this.value)"></span>
-      <span class="point-stat"><span class="lbl">×Mult</span><input type="number" class="mini-input xmult-color" value="${c.xMult}" min="0" step=".5" oninput="updateCard(${n}, '${c.id}', 'xMult', this.value)"></span>
+      <div class="card-stat"><span class="lbl">Chips</span><input type="number" class="mini-input chip-input chip-color no-spinner" value="${c.chips}" min="0" oninput="updateCard(${n}, '${c.id}', 'chips', this.value)"></div>
+      <div class="card-stat"><span class="lbl">+Mult</span><input type="number" class="mini-input mult-color" value="${c.aMult}" min="0" oninput="updateCard(${n}, '${c.id}', 'aMult', this.value)"></div>
+      <div class="card-stat"><span class="lbl">×Mult</span><input type="number" class="mini-input xmult-color" value="${c.xMult}" min="0" step=".5" oninput="updateCard(${n}, '${c.id}', 'xMult', this.value)"></div>
+      <div class="card-stat"><span class="lbl">Hits</span><input type="number" class="mini-input" value="${c.times}" min="1" step="1" oninput="updateCard(${n}, '${c.id}', 'times', this.value)"></div>
       <button class="remove-btn" title="Clear card" onclick="clearCard(${n}, '${c.id}')">✕</button>
     </div>
   `).join('');
@@ -267,40 +268,45 @@ function onHandTypeChange(n, sel) {
 
 // ── Scoring ───────────────────────────────────────────────────────────────────
 
-// Formula: Score = (handChips + cardChips + jokerChips)
-//                × (handMult + cardAMult + jokerAMult)
-//                × jokerXMult1 × jokerXMult2 × ...
-//
-// All xMult values are multiplied together (order-independent for pure multipliers).
+// Formula: Score = chips × mult
+// Cards and jokers are applied sequentially to running chips/mult totals.
+// Each card hit: chips += card.chips; mult = (mult + card.aMult) × card.xMult
+// Jokers follow cards in order: mult = (mult + joker.aMult) × joker.xMult
 
 function calculate(n) {
   const s = state[n];
 
   let chips = parseFloat(document.getElementById(`hand-chips-${n}`).value) || 0;
   let mult  = parseFloat(document.getElementById(`hand-mult-${n}`).value)  || 0;
-  let plasma = document.getElementById('plasma-deck');
-  let xMult = 1;
+  const plasma = document.getElementById('plasma-deck');
 
-  for (const c of s.cards) { chips += c.chips || 0; mult += c.aMult || 0; xMult *= (c.xMult || 1); }
-  for (const j of jokers.filter(j => j[`hand${n}`])) { chips += j.chips || 0; mult += j.aMult || 0; xMult *= (j.xMult || 1); }
+  // Cards: each hit applies +chips, +aMult, ×xMult sequentially to running totals
+  for (const c of s.cards) {
+    chips += (c.chips || 0) * (c.times || 1);
+    for (let i = 0; i < (c.times || 1); i++) {
+      mult += c.aMult || 0;
+      mult *= c.xMult || 1;
+    }
+  }
+
+  // Jokers: applied sequentially after cards
+  for (const j of jokers.filter(j => j[`hand${n}`])) {
+    chips += j.chips || 0;
+    mult  += j.aMult || 0;
+    mult  *= j.xMult || 1;
+  }
 
   if (plasma.checked) {
-    chips = (chips + mult * xMult)/2;
-    mult = chips;
-    xMult = 1;
+    chips = (chips + mult) / 2;
+    mult  = chips;
   }
 
-  const score = Math.floor(chips * mult * xMult);
+  const score = Math.floor(chips * mult);
 
-  // Formula display
-  let formula = `<span class="chip-color">${chips} chips</span>`
-              + `<span class="op">×</span>`
-              + `<span class="mult-color">${mult} mult</span>`;
-  if (xMult !== 1) {
-    formula += `<span class="op">×</span>`
-             + `<span class="xmult-color">×${fmtNum(xMult)}</span>`;
-  }
-  formula += `<span class="op">=</span>`;
+  const formula = `<span class="chip-color">${fmtNum(chips)} chips</span>`
+                + `<span class="op">×</span>`
+                + `<span class="mult-color">${fmtNum(mult)} mult</span>`
+                + `<span class="op">=</span>`;
 
   document.getElementById(`formula-${n}`).innerHTML = formula;
   document.getElementById(`score-value-${n}`).textContent = score.toLocaleString();

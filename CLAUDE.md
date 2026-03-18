@@ -22,12 +22,10 @@ Pure HTML/CSS/JS, split across four files:
 ## Scoring Formula
 
 ```
-Score = (handChips + cardChips + jokerChips)
-      × (handMult  + cardAMult + jokerAMult)
-      × jokerXMult₁ × jokerXMult₂ × …
+Score = chips × mult
 ```
 
-All additive effects are summed first, then all xMult values are multiplied together. This is a deliberate simplification — users can adjust individual fields to reflect the actual in-game trigger order.
+Cards and jokers are applied sequentially to running totals. Each card hit (controlled by the "Hits" field): `chips += card.chips`, then `mult = (mult + card.aMult) × card.xMult`. Jokers follow in order with the same pattern. This correctly handles retriggers — e.g. +4 aMult / ×2 xMult hit 3 times: (0+4)×2=8, (8+4)×2=24, (24+4)×2=56.
 
 ## UI Structure
 

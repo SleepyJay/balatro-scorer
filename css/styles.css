@@ -243,6 +243,17 @@ body {
   cursor: help;
 }
 
+.card-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.card-stat .lbl {
+  font-size: 0.6rem;
+}
+
 .point-stat {
   display: flex;
   align-items: center;
